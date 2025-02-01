@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optium3DEngine1.0</title>
+</head>
+<body onload="runScript()">
+    <style>
+        body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #246bd4;
+        overflow: hidden;
+        }
+        #container { width: 50%; height: 100%; float: left; resize: auto;}
+        #button {
+            float: left;
+            width: 50%;
+            height: 25%;
+            border-color: rgb(238, 84, 84);
+            background-color: #152235;
+            text-align: center;
+            justify-content: space-between;
+        }
+        button {
+            color: rgb(93, 240, 73);
+            background-color: #152235;
+            padding: 20px;
+            border-radius: 5px;
+            border-color: rgb(238, 84, 84);
+            text-align: center;
+            animation: letterBounce 2s;
+            animation-iteration-count: 1;
+            margin-right: 10px;
+        }
+        button:hover {
+            animation: rgb 4s;
+            animation-iteration-count: infinite;
+        }
+        @keyframes letterBounce{
+            0%, 25%, 50%, 75%, 100%{
+                transform: translateY(0);
+            }
+            2.5%{
+                transform: translateY(-150px);
+            }
+            5%{
+                transform: translateY(-75%);
+            }
+            10%{
+                transform: translateY(-55px);
+            }
+            15% {
+                transform: translateY(-35px);
+            }
+            35% {
+                transform: translateY(-25px);
+            }
+            65% {
+                transform: translateY(-10px);
+            }
+            85% {
+                transform: translateY(-5px);
+            }
+            90%{
+                transform: translateY(-4.5px);
+            }
+            95%{
+                transform: translateY(-2px);
+            }
+            97%{
+                transform: translateY(-1px);
+            }
+            99%{
+                transform: translateY(-.5px);
+            }
+        }
+        @keyframes rgb{
+            0%{
+                background-color: #152235;
+            }
+            10%{
+                background-color: #203f6e;
+                color: rgb(238, 84, 84);
+            }
+            20%{
+                background-color: #336bbe;
+                color: rgb(238, 84, 84)
+            }
+            35%{
+                background-color: #fd9b9b;
+                color: #203f6e;
+            }
+            45%{
+                background-color: rgb(238, 84, 84);
+                color: #203f6e
+            }
+            60%{
+                background-color: aquamarine;
+                color: #152235
+            }
+            65%{
+                background-color: rgb(93, 240, 73);
+                color: #152235
+            }
+            85%{
+                background-color: #203f6e;
+            }
+        }
+    </style>
+    <div id="container"></div>
+    <div id="button">
+        <h1> </h1>
+        <h1> </h1>
+        <h1> </h1>
+        <button onclick="run()">run script</button>
+        <button onclick="save()">save script</button>
+        <button onclick="goToDocs()">docs</button>
+        <button onclick="seeEngineCodeDoc()">engine code</button>
+        <h1> </h1>
+        <h1> </h1>
+        <h1> </h1>
+        <button onclick="goToWebSite()">website</button>
+        <button onclick="goToDownload()">download</button>
+        <button onclick="goToUpdateLog()">update log</button>
+        <button onclick="API()">API</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        const code = localStorage.getItem("OptiumWebGameEngineUserCode");
+        const userStorage = localStorage.getItem("OptiumWebGameEngineUserStorage")
+        let textarea = document.createElement('textarea');
+        textarea.id = 'script'
+        textarea.style.width = '50%';
+        textarea.style.height = '75%';
+        textarea.style.padding = '10px';
+        textarea.style.resize = 'auto';
+        textarea.style.boxSizing = 'border-box';
+        textarea.style.fontSize = '16px';
+        textarea.style.color = 'rgb(93, 240, 73)';
+        textarea.style.backgroundColor = '#152235';
+        textarea.style.borderColor = 'rgb(238, 84, 84)';
+        textarea.style.float = 'left';
+        textarea.value = code;
+        textarea.addEventListener('input', save);
+        document.body.appendChild(textarea);
+        function save(){
+            let currentCode = document.getElementById('script').value;
+            localStorage.setItem("OptiumWebGameEngineUserCode", currentCode);
+        }
+        function run(){
+            save();
+            window.location.reload();
+        }
+        function runScript(){
+            let currentCode = document.getElementById('script').value;
+            eval(currentCode);
+        }
+        function goToDocs(){
+            window.open("doc link here", "_blank")
+        }
+        function seeEngineCodeDoc(){
+            window.open("engine code doc link hear", "_blank");
+        }
+        function goToWebSite(){
+            window.open("website link here", "_blank");
+        }
+        function goToDownload(){
+            window.open("engine download link here", "_blank");
+        }
+        function goToUpdateLog(){
+            window.open("Update log here", "_blank");
+        }
+        function API(){
+            window.open("How to use api link", "_blank");
+        }
+        const container = document.getElementById('container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 2 / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth / 2, window.innerHeight );
+        container.appendChild(renderer.domElement);
+        camera.position.z = 5;
+        //user prebuilt functions and vars
+        userGenCubes = [];
+        userGenSphers = [];
+        userGenCylinders = [];
+        userGenCones = [];
+        userGenRings = [];
+        userObjectCoordNames = [];
+        userObjectCoords = [];
+        userRotateName = [];
+        userRotateObject = [];
+        function getColor(color){
+            const allColors = ["green", "Green", "GREEN", "g", "G", "red", "Red", "RED", "r", "R", "yellow", "Yellow", "YELLOW", "y", "Y", "black", "Black", "BLACK", "b", "B", "white", "White", "WHITE", "w", "W", "purple", "Purple", "PURPLE", "pink", "Pink", "PINK", "blue", "Blue", "BLUE", "b", "B"];
+            const colorIndi = [0x00ff00, 0x00ff00, 0x00ff00, 0x00ff00, 0x00ff00, 0xff0000, 0xff0000, 0xff0000, 0xff0000, 0xff0000, 0xffff00, 0xffff00, 0xffff00, 0xffff00, 0xffff00, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 'rgb(128, 0, 128)', 'rgb(128, 0, 128)', 'rgb(128, 0, 128)', 0xFFC0CB, 0xFFC0CB, 0xFFC0CB, 'rgb(0, 0, 225)', 'rgb(0, 0, 225)', 'rgb(0, 0, 225)', 'rgb(0, 0, 225)', 'rgb(0, 0, 225)'];
+            let colorID = 0;
+            for (let i = 0; i <= allColors.length;){
+                let currentColorNum = allColors[i];
+                if (color == currentColorNum){
+                    colorID+=i;
+                    i+=allColors.length;
+                }else{
+                    i++;
+                }
+            }
+            return (colorIndi[colorID]);
+        }
+        //preset objects
+        function cube(x, y, z, sX, sY, sZ, userColor, name){
+            let color = getColor(userColor);
+            const geometry = new THREE.BoxGeometry(sX, sY, sZ);
+            const material = new THREE.MeshBasicMaterial({ color: color });
+            const cube = new THREE.Mesh(geometry, material);
+            cube.position.set(x, y, z);
+            userObjectCoordNames.push(name);
+            userObjectCoords.push(x, y, z);
+            userRotateName.push(name);
+            userRotateObject.push(cube);
+            userGenCubes.push(cube);
+            scene.add(cube);
+        }
+        function sphere(x, y, z, rad, userColor, name){
+            let color = getColor(userColor);
+            const geometry = new THREE.SphereGeometry( rad, 32, 16 ); 
+            const material = new THREE.MeshBasicMaterial( { color: color } ); 
+            const sphere = new THREE.Mesh( geometry, material ); 
+            sphere.position.set(x, y, z);
+            userObjectCoordNames.push(name);
+            userObjectCoords.push(x, y, z);
+            userRotateName.push(name);
+            userRotateObject.push(sphere);
+            userGenSphers.push(sphere);
+            scene.add(sphere);
+        }
+        function cylinder(x, y, z, rad, len, userColor, name){
+            let color = getColor(userColor);
+            const geometry = new THREE.CylinderGeometry( rad, rad, len, 32 ); 
+            const material = new THREE.MeshBasicMaterial( {color: color} ); 
+            const cylinder = new THREE.Mesh( geometry, material ); 
+            cylinder.position.set(x, y, z);
+            userObjectCoordNames.push(name);
+            userObjectCoords.push(x, y, z);
+            userRotateName.push(name);
+            userRotateObject.push(cylinder);
+            userGenCylinders.push(cylinder);
+            scene.add(cylinder);
+        }
+        function cone(x, y, z, rad, len, userColor, name){
+            let color = getColor(userColor);
+            const geometry = new THREE.ConeGeometry( rad, len, 32 ); 
+            const material = new THREE.MeshBasicMaterial( {color: color} );
+            const cone = new THREE.Mesh(geometry, material ); 
+            cone.position.set(x, y, z);
+            userObjectCoordNames.push(name);
+            userObjectCoords.push(x, y, z);
+            userRotateName.push(name);
+            userRotateObject.push(cone);
+            userGenCones.push(cone);
+            scene.add(cone);
+        }
+        function ring(x, y, z, inRad, outRad, userColor, name){
+            let color = getColor(userColor)
+            const geometry = new THREE.RingGeometry( inRad, outRad, 32 ); 
+            const material = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
+            const mesh = new THREE.Mesh( geometry, material ); 
+            mesh.position.set(x, y, z);
+            userObjectCoordNames.push(name);
+            userObjectCoords.push(x, y, z);
+            userRotateName.push(name);
+            userRotateObject.push(mesh);
+            userGenRings.push(mesh);
+            scene.add( mesh );
+        }
+        function object(code){
+            eval(code);
+        }
+        //full editor access
+        function html(code){
+            let userChoice = prompt("Are you sure you want to run this code(y/n): " + code);
+            if (userChoice == "yes" || userChoice == "Yes" || userChoice == "y" || userChoice == "Y"){
+                document.write(code);
+            }
+        }
+        function css(code){
+            let userChoice = prompt("Are you sure you want to run this code(y/n): " + code);
+            if (userChoice == "yes" || userChoice == "Yes" || userChoice == "y" || userChoice == "Y"){
+                document.write("<style>"+code+"</style>");
+            }
+        }
+        function reload(){
+            let userChoice = prompt("Are you sure you want to reload(y/n): ");
+            if (userChoice == "yes" || userChoice == "Yes" || userChoice == "y" || userChoice == "Y"){
+                window.location.reload();
+            }
+        }
+        function autoReload(){
+            window.location.reload();
+        }
+        function goTo(webName){
+            let userChoice = prompt("Are you sure you want to go to: " + webName);
+            if (userChoice == "yes" || userChoice == "Yes" || userChoice == "y" || userChoice == "Y"){
+                window.location.href = webName;
+            }
+        }
+        //user storage
+        function setUserStorage(setTo){
+            localStorage.setItem("OptiumWebGameEngineUserStorage", setTo);
+        }
+        var tempID = [];
+        var tempStore = [];
+        function setTempStorage(id, whatToStore){
+            tempID.push(id);
+            tempStore.push(whatToStore);
+        }
+        function tempStorage(id){
+            let storageID = 0
+            for (let i = 0; i <= tempID.length;){
+                let getID = tempID[i];
+                if (getID == id){
+                    storageID+=i;
+                    i+=tempID.length;
+                }else{
+                    i++;
+                }
+            }
+            return(tempStore[storageID]);
+        }
+        function ask(id, q){
+            let userPrompt = prompt(q);
+            tempID.push(id);
+            tempStore.push(userPrompt);
+        }
+        function getCoord(name){
+            let coordStorageNameID = 0;
+            let objectX = 0;
+            let objectY = 0;
+            let objectZ = 0;
+            for (let i = 0; i <= userObjectCoordNames.length;){
+                let currentObjectName = userObjectCoordNames[i];
+                if (name == currentObjectName){
+                    coordStorageNameID+=i;
+                    i+=userObjectCoordNames.length;
+                }else{
+                    i++;
+                }
+            }
+            let finalCoordObjectNameID = 0;
+            if (coordStorageNameID == 0){
+                finalCoordObjectNameID+=3;
+            }else{
+                finalCoordObjectNameID+=(finalCoordObjectNameID*3);
+            }
+            objectZ+=userObjectCoords[finalCoordObjectNameID-1];
+            objectY+=userObjectCoords[finalCoordObjectNameID-2];
+            objectX+=userObjectCoords[finalCoordObjectNameID-3];
+            return(objectX + ", " + objectY + ", " + objectZ);
+        }
+        //preset animations
+        var doRotateCubes = 0;
+        function rotateCubes(){
+            if (doRotateCubes == 0){
+                doRotateCubes++;
+            }else{
+                doRotateCubes--;
+            }
+        }
+        var dorotateSpheres = 0;
+        function rotateSpheres(){
+            if (dorotateSpheres == 0){
+                dorotateSpheres++;
+            }else{
+                dorotateSpheres--;
+            }
+        }
+        var dorotateCylinders = 0;
+        function rotateCylinders(){
+            if (dorotateCylinders == 0){
+                dorotateCylinders++;
+            }else{
+                dorotateCylinders--;
+            }
+        }
+        var dorotateCones = 0;
+        function rotateCones(){
+            if (dorotateCones == 0){
+                dorotateCones++;
+            }else{
+                dorotateCones--;
+            }
+        }
+        var doCameraFall = 0;
+        function cameraFall(){
+            if (doCameraFall == 0){
+                doCameraFall++;
+            }else{
+                doCameraFall--;
+            }
+        }
+        var doCameraFly = 0;
+        function cameraFly(){
+            if (doCameraFly == 0){
+                doCameraFly++;
+            }else{
+                doCameraFly--;
+            }
+        }
+        var docameraZoomOut = 0;
+        function cameraZoomOut(){
+            if (docameraZoomOut == 0){
+                docameraZoomOut++;
+            }else{
+                docameraZoomOut--;
+            }
+        }
+        var docameraZoomIn = 0;
+        function cameraZoomIn(){
+            if (docameraZoomIn == 0){
+                docameraZoomIn++;
+            }else{
+                docameraZoomIn--;
+            }
+        }
+        var doRotateRings = 0;
+        function rotateRings(){
+            if (doRotateRings == 0){
+                doRotateRings++;
+            }else{
+                doRotateRings--;
+            }
+        }
+        function rotate(name, coord, byHowMuch){
+            let rotateStorageNameID = 0;
+            for (let i = 0; i <= userRotateName.length;){
+                let currentObjectName = userRotateName[i];
+                if (name == currentObjectName){
+                    rotateStorageNameID+=i;
+                    i+=userRotateName.length;
+                }else{
+                    i++;
+                }
+            }
+            let object = userRotateObject[rotateStorageNameID];
+            if (coord == "x" || coord == "X"){
+                object.rotation.x+=byHowMuch;
+            }else if(coord == "y" || coord == "Y"){
+                object.rotation.y+=byHowMuch;
+            }else{
+                object.rotation.z+=byHowMuch;
+            }
+        }
+        //events
+        function move(coordType, val){
+            if (coordType == "x" || coordType == "X"){
+                camera.position.x = val;
+            }
+            if (coordType == "y" || coordType == "Y"){
+                camera.position.y = val;
+            }
+            if (coordType == "z" || coordType == "Z"){
+                camera.position.z = val;
+            }
+        }
+        function selectMove(whatToMove, x, y, z){
+            whatToMove.position.set(x, y, z);
+        }
+        function cameraSlant(coordType, deg){
+            if (coordType == "x" || coordType == "X"){
+                camera.rotation.y+=deg;
+            }else if(coordType == "y" || coordType == "Y"){
+                camera.rotation.x+=deg;
+            }else{
+                console.log("make sure to type in the right coords!");
+            }
+        }
+        function setCameraRotation(x, y){
+            camera.rotation.x = x;
+            camera.rotation.y = y;
+        }
+        // basic movement types
+        var activateTestMovment = 0;
+        function testMovement(){
+            if (activateTestMovment == 0){
+                activateTestMovment++;
+            }else{
+                activateTestMovment--;
+            }
+        }
+        //basic background lighting
+        function light(){
+            scene.background = new THREE.Color(0xffffff); 
+        }
+        function dark(){
+            scene.background = new THREE.Color(0x000000);
+        } 
+        function emptySky(){
+            scene.background = new THREE.Color('rgb(173, 216, 230)');
+        }
+        //custom scenes
+        function animate() {
+            requestAnimationFrame(animate);
+            if (doRotateCubes == 1){
+                userGenCubes.forEach(cube => {
+                    cube.rotation.x += 0.01; 
+                    cube.rotation.y += 0.01;
+                });
+            }
+            if (dorotateSpheres == 1){
+                userGenSphers.forEach(sphere => {
+                    sphere.rotation.x += 0.01;
+                    sphere.rotation.y += 0.01;
+                });
+            }
+            if (dorotateCylinders == 1){
+                userGenCylinders.forEach(cylinder => {
+                    cylinder.rotation.x += 0.01;
+                    cylinder.rotation.y += 0.01;
+                });
+            }
+            if (dorotateCones == 1){
+                userGenCones.forEach(cone => {
+                    cone.rotation.x += 0.01;
+                    cone.rotation.z += 0.01;
+                });
+            }
+            if (doRotateRings == 1){
+                userGenRings.forEach(mesh => {
+                    mesh.rotation.x += 0.01;
+                    mesh.rotation.z += 0.01;
+                });
+            }
+            if (doCameraFall == 1){
+                camera.position.y-=0.05;
+            }
+            if (doCameraFly == 1){
+                camera.position.y+=0.05;
+            }
+            if (docameraZoomOut == 1){
+                camera.position.z+=0.05;
+            }
+            if (docameraZoomIn == 1){
+                camera.position.z-=0.05;
+            }
+            if (activateTestMovment == 1){
+                let jumpActive = 0;
+                document.addEventListener('keydown', function(event) {
+                    if (event.key == 'a'){
+                        camera.position.x-=.00150;
+                    }
+                    if (event.key == 'd'){
+                        camera.position.x+=.00150;
+                    }
+                    if (event.key == 'w'){
+                        camera.position.z-=.00150;
+                    }
+                    if (event.key == 's'){
+                        camera.position.z+=.00150;
+                    }
+                });
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
